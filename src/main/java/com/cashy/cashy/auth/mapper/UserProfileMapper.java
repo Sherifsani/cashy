@@ -1,5 +1,6 @@
 package com.cashy.cashy.auth.mapper;
 
+import com.cashy.cashy.auth.model.Role;
 import com.cashy.cashy.auth.model.UserProfile;
 import com.cashy.cashy.auth.dto.UserProfileSignupDTO;
 
@@ -13,6 +14,7 @@ public  class UserProfileMapper {
                 .username(signupDTO.getUsername())
                 .password(signupDTO.getPassword())
                 .createdAt(LocalDateTime.now())
+                .role(Role.User)
                 .build();
     }
 

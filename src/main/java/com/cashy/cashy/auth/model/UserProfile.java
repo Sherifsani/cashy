@@ -30,6 +30,8 @@ public class UserProfile {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
 /*    TODO: add feature for activation via email after registration
