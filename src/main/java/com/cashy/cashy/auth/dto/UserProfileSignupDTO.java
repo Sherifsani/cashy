@@ -14,13 +14,14 @@ import java.util.UUID;
 @Setter
 public class UserProfileSignupDTO {
     @Size(max = 50)
+    @NotBlank(message = "username should not be blank")
     private String username;
 
     @Email(message = "please enter a valid email address")
     @NotBlank(message = "email is required")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "password should not be blank")
     @Size(min = 6, message = "password must be at least 8 characters long")
     private String password;
 
