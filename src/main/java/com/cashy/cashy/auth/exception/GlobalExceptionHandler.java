@@ -27,4 +27,11 @@ public class GlobalExceptionHandler extends RuntimeException {
         error.put("email", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
+
+    @ExceptionHandler(InvalidCredentials.class)
+    public ResponseEntity<Map<String, String>> handleInvalidCredentials(InvalidCredentials ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("email", ex.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
 }

@@ -3,6 +3,7 @@ package com.cashy.cashy.auth.service;
 import com.cashy.cashy.auth.dto.UserLoginRequestDTO;
 import com.cashy.cashy.auth.dto.UserSignupResponseDTO;
 import com.cashy.cashy.auth.exception.EmailAlreadyExistsException;
+import com.cashy.cashy.auth.exception.InvalidCredentials;
 import com.cashy.cashy.auth.model.UserProfile;
 import com.cashy.cashy.auth.dto.UserProfileSignupDTO;
 import com.cashy.cashy.auth.mapper.UserProfileMapper;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -37,9 +39,25 @@ public class UserService {
                 .build();
     }
 
-    public Optional<String> authenticateUser(UserLoginRequestDTO  userLoginRequestDTO) {
-        return userProfileRepository.findByEmail(userLoginRequestDTO.getEmail())
-                .filter(u -> passwordEncoder.matches(userLoginRequestDTO.getPassword(), u.getPassword()))
-                .map(u -> jwtUtil.generateToken(u.getEmail(), String.valueOf(u.getRole())));
+    public Optional<String> authenticateUser(UserLoginRequestDTO loginDTO) {
+        return userProfileRepository.findByEmail(loginDTO.getEmail())
+                .filter(user -> passwordEncoder.matches(loginDTO.getPassword(), user.getPassword()))
+                .map(user -> jwtUtil.generateToken(user.getEmail(), user.getRole().name()))
+                .or(() -> {
+                    throw new InvalidCredentials("Invalid email or password.");
+                });
     }
+
+    public void saveUser(UserProfile userProfile) {
+        userProfileRepository.save(userProfile);
+    }
+
+    public Optional<UserProfile > findUserById(UUID userId) {
+        return userProfileRepository.findById(userId);
+    }
+
+    public boolean UserExistsById(UUID userId){
+        return userProfileRepository.existsById(userId);
+    }
+
 }

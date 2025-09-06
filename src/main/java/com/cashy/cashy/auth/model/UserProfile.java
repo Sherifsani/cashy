@@ -1,10 +1,14 @@
 package com.cashy.cashy.auth.model;
 
+import com.cashy.cashy.transaction.model.Transaction;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -33,6 +37,9 @@ public class UserProfile {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile", orphanRemoval = true)
+    private List<Transaction> transactions = new ArrayList<>();
 
 /*    TODO: add feature for activation via email after registration
     private boolean isActive;

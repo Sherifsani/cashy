@@ -20,14 +20,20 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserSignupResponseDTO> signUp(@RequestBody @Valid UserProfileSignupDTO userProfileSignupDTO) {
+    public ResponseEntity<UserSignupResponseDTO> signUp(
+            @RequestBody
+            @Valid
+            UserProfileSignupDTO userProfileSignupDTO
+    ) {
         UserSignupResponseDTO responseDTO = userService.registerUser(userProfileSignupDTO);
         return ResponseEntity.ok(responseDTO);
     }
 
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponseDTO> login(
-            @RequestBody UserLoginRequestDTO userLoginRequestDTO
+            @RequestBody
+            @Valid
+            UserLoginRequestDTO userLoginRequestDTO
             ){
         Optional<String> tokenOptional = userService.authenticateUser(userLoginRequestDTO);
         if(tokenOptional.isEmpty()){

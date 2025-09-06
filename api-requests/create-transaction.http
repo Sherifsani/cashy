@@ -1,0 +1,9 @@
+POST http://localhost:8080/api/transaction
+Content-Type: application/json
+
+{
+  "amount": "920000",
+  "description": "test 2",
+  "transactionType": "EXPENSE",
+  "userId": "20353438-7ea5-4e3f-acd5-ad9a70151ce3"
+}
