@@ -7,6 +7,7 @@ import com.cashy.cashy.transaction.dto.TransactionResponseDTO;
 import com.cashy.cashy.transaction.exception.UserNotFoundException;
 import com.cashy.cashy.transaction.mapper.TransactionMapper;
 import com.cashy.cashy.transaction.model.Transaction;
+import com.cashy.cashy.transaction.model.TransactionType;
 import com.cashy.cashy.transaction.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,13 +22,14 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserService userService;
 
+//    helper function to find a user
+    public Optional<UserProfile> findUserOrThrow(UUID userId){
+        return userService.findUserById(userId);
+    }
+
 //    creates a new transaction
     public TransactionResponseDTO createTransaction(TransactionRequestDTO requestDTO){
-        Optional<UserProfile> userProfile = userService.findUserById(requestDTO.getUserId());
-        if (userProfile.isEmpty()){
-            throw new UserNotFoundException(requestDTO.getUserId());
-        }
-        UserProfile user = userProfile.get();
+        UserProfile user = findUserOrThrow(requestDTO.getUserId()).get();
         Transaction newTransaction = TransactionMapper.toEntity(requestDTO);
         newTransaction.setUserProfile(user);
         user.getTransactions().add(newTransaction);
@@ -37,17 +39,50 @@ public class TransactionService {
 
 //    fetch all transactions for a particular user
     public List<TransactionResponseDTO> getTransactionsByUserId(UUID userId){
-        Optional<UserProfile> userProfile = userService.findUserById(userId);
-        if (userProfile.isEmpty()){
-            throw new UserNotFoundException(userId);
-        }
-        UserProfile user = userProfile.get();
+        UserProfile user = findUserOrThrow(userId).get();
 
         return user
                 .getTransactions()
                 .stream()
                 .map(TransactionMapper::toResponseDTO)
                 .toList();
+    }
+
+//    fetch transactions for each user by transaction type
+    public List<TransactionResponseDTO> getTransactionsByTypeForUser(UUID userId, TransactionType type){
+        UserProfile user = findUserOrThrow(userId).get();
+        return user
+                .getTransactions()
+                .stream()
+                .filter(transaction -> transaction.getTransactionType() == type)
+                .map(TransactionMapper::toResponseDTO)
+                .toList();
+    }
+
+    public TransactionResponseDTO updateTransaction(Long transactionId, TransactionRequestDTO requestDTO) {
+        // find the user or throw exception
+        Optional<UserProfile> user = findUserOrThrow(requestDTO.getUserId());
+
+        // find the transaction for this user
+        Transaction transaction = transactionRepository
+                .findByUserProfileIdAndId(requestDTO.getUserId(), transactionId)
+                .orElseThrow(() -> new RuntimeException("transaction not found"));
+
+        // update only provided fields
+        if (requestDTO.getAmount() != null) {
+            transaction.setAmount(requestDTO.getAmount());
+        }
+        if (requestDTO.getDescription() != null) {
+            transaction.setDescription(requestDTO.getDescription());
+        }
+        if (requestDTO.getTransactionType() != null) {
+            transaction.setTransactionType(requestDTO.getTransactionType());
+        }
+
+        // save updated transaction
+        transactionRepository.save(transaction);
+
+        return TransactionMapper.toResponseDTO(transaction);
     }
 
 //    public boolean deleteTransaction(Long id){

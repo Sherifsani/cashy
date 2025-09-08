@@ -14,23 +14,40 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/transaction")
+@RequestMapping("/api/users/{userId}/transactions")
 public class TransactionController {
     public final TransactionService transactionService;
 
     @PostMapping
     public ResponseEntity<TransactionResponseDTO> createTransaction(
-            @RequestBody TransactionRequestDTO requestDTO
+            @RequestBody TransactionRequestDTO requestDTO,
+            @PathVariable UUID userId
     ){
+        requestDTO.setUserId(userId);
         TransactionResponseDTO response = transactionService.createTransaction(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping
     public ResponseEntity<List<TransactionResponseDTO>> getTransactions(
-            @PathVariable UUID userId
+            @PathVariable UUID userId,
+            @RequestParam(required = false) TransactionType transactionType
             ){
-        return ResponseEntity.ok(transactionService.getTransactionsByUserId(userId));
+        if(transactionType == null){
+            return ResponseEntity.ok(transactionService.getTransactionsByUserId(userId));
+        }
+        return ResponseEntity.ok(transactionService.getTransactionsByTypeForUser(userId, transactionType));
     }
+
+    @PutMapping("/{transactionId}")
+    public ResponseEntity<TransactionResponseDTO> updateTransaction(
+            @PathVariable Long transactionId,
+            @PathVariable UUID userId,
+            @RequestBody TransactionRequestDTO requestDTO
+    ){
+        requestDTO.setUserId(userId);
+        return ResponseEntity.ok().body(transactionService.updateTransaction(transactionId,requestDTO));
+    }
+
 
 }

@@ -1,1 +1,1 @@
-GET http://localhost:8080/api/transaction/20353438-7ea5-4e3f-acd5-ad9a70151ce3
+GET http://localhost:8080/api/users/5b37b482-e250-4c2b-9ded-69def2b7b9f9/transactions

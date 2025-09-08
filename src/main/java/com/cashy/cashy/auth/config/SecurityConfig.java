@@ -25,7 +25,7 @@ public class SecurityConfig {
                                 "/api/auth/signup", "/api/auth/login"
                         )
                                 .permitAll()
-                                .requestMatchers("/api/transaction/**").permitAll()
+                                .requestMatchers("/api/users/**").permitAll()
                                 .anyRequest()
                                 .authenticated()
                 );

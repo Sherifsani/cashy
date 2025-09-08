@@ -6,10 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     List<Transaction> findByUserProfile(UserProfile userProfile);
     List<Transaction> findByUserProfileId(UUID id);
+    Optional<Transaction> findByUserProfileIdAndId(UUID id, Long transactionId);
 }
