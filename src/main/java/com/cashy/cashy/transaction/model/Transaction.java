@@ -1,6 +1,7 @@
 package com.cashy.cashy.transaction.model;
 
 import com.cashy.cashy.auth.model.UserProfile;
+import com.cashy.cashy.category.model.Category;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -34,5 +35,9 @@ public class Transaction {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserProfile userProfile;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id",  nullable = false)
+    private Category category;
 
 }

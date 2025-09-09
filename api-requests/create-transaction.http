@@ -1,8 +1,10 @@
-POST http://localhost:8080/api/users/5b37b482-e250-4c2b-9ded-69def2b7b9f9/transactions
+POST http://localhost:8080/api/users/7c83e736-31b2-4404-a2af-21de3c48d24c/transactions
 Content-Type: application/json
 
 {
   "amount": "136500.00",
   "description": "salary",
-  "transactionType": "INCOME"
+  "transactionType": "INCOME",
+  "categoryId": "e1b3a710-822a-44a3-97a2-7298c9db5f03",
+  "userId": "7c83e736-31b2-4404-a2af-21de3c48d24c"
 }

@@ -22,6 +22,7 @@ public class TransactionMapper {
                 .description(transaction.getDescription())
                 .amount(transaction.getAmount())
                 .transactionType(transaction.getTransactionType())
+                .categoryName(transaction.getCategory().getCategoryName())
                 .build();
     }
 }

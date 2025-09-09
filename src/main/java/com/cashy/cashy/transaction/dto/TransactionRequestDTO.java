@@ -23,4 +23,7 @@ public class TransactionRequestDTO {
 
     @NotBlank(message = "user id is missing")
     private UUID userId;
+
+    @NotBlank(message = "category id is missing")
+    private UUID categoryId;
 }

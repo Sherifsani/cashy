@@ -3,6 +3,8 @@ package com.cashy.cashy.transaction.service;
 import com.cashy.cashy.auth.exception.TransactionNotFound;
 import com.cashy.cashy.auth.model.UserProfile;
 import com.cashy.cashy.auth.service.UserService;
+import com.cashy.cashy.category.model.Category;
+import com.cashy.cashy.category.service.CategoryService;
 import com.cashy.cashy.transaction.dto.TransactionRequestDTO;
 import com.cashy.cashy.transaction.dto.TransactionResponseDTO;
 import com.cashy.cashy.transaction.exception.UserNotFoundException;
@@ -22,6 +24,7 @@ import java.util.UUID;
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserService userService;
+    private final CategoryService categoryService;
 
 //    helper function to find a user
     public Optional<UserProfile> findUserOrThrow(UUID userId){
@@ -31,7 +34,9 @@ public class TransactionService {
 //    creates a new transaction
     public TransactionResponseDTO createTransaction(TransactionRequestDTO requestDTO){
         UserProfile user = findUserOrThrow(requestDTO.getUserId()).get();
+        Category category = categoryService.getCategoryById(requestDTO.getCategoryId());
         Transaction newTransaction = TransactionMapper.toEntity(requestDTO);
+        newTransaction.setCategory(category);
         newTransaction.setUserProfile(user);
         user.getTransactions().add(newTransaction);
         userService.saveUser(user);
