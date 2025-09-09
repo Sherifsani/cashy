@@ -1,5 +1,6 @@
 package com.cashy.cashy.transaction.service;
 
+import com.cashy.cashy.auth.exception.TransactionNotFound;
 import com.cashy.cashy.auth.model.UserProfile;
 import com.cashy.cashy.auth.service.UserService;
 import com.cashy.cashy.transaction.dto.TransactionRequestDTO;
@@ -85,10 +86,16 @@ public class TransactionService {
         return TransactionMapper.toResponseDTO(transaction);
     }
 
-//    public boolean deleteTransaction(Long id){
-//        if(transactionRepository.existsById(id)){
-//            return false;
-//        }
-//        return true;
-//    }
+    public void deleteTransaction(Long transactionId, UUID userId) {
+        UserProfile user = findUserOrThrow(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        Transaction transaction = user.getTransactions().stream()
+                .filter(t -> t.getId().equals(transactionId))
+                .findFirst()
+                .orElseThrow(() -> new TransactionNotFound(transactionId));
+
+        transactionRepository.deleteById(transactionId);
+    }
+
 }

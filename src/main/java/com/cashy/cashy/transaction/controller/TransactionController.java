@@ -49,5 +49,15 @@ public class TransactionController {
         return ResponseEntity.ok().body(transactionService.updateTransaction(transactionId,requestDTO));
     }
 
+    @DeleteMapping("/{transactionId}")
+    public ResponseEntity<Void> deleteTransaction(
+            @PathVariable UUID userId,
+            @PathVariable Long transactionId
+    ) {
+        transactionService.deleteTransaction(transactionId, userId);
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
+
+
 
 }

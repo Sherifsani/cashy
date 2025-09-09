@@ -34,4 +34,11 @@ public class GlobalExceptionHandler extends RuntimeException {
         error.put("email", ex.getMessage());
         return ResponseEntity.badRequest().body(error);
     }
+
+    @ExceptionHandler(TransactionNotFound.class)
+    public ResponseEntity<Map<String, String>> handleTransactionNotFound(TransactionNotFound ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("transaction", ex.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
 }

@@ -1,0 +1,6 @@
+PUT http://localhost:8080/api/users/5b37b482-e250-4c2b-9ded-69def2b7b9f9/transactions/2
+Content-Type: application/json
+
+{
+  "description": "sampledescription"
+}
