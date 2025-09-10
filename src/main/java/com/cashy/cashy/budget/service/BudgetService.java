@@ -25,6 +25,7 @@ public class BudgetService {
     private final UserService userService;
 
     public BudgetResponseDTO createBudget(BudgetRequestDTO budgetRequestDTO, UUID userId) {
+
         Optional<UserProfile> optionalUserProfile = userService.findUserById(userId);
         if(optionalUserProfile.isEmpty()){
             throw new UserNotFoundException(userId);
@@ -74,5 +75,49 @@ public class BudgetService {
                 .orElseThrow(() -> new BudgetNotFoundException(budgetId));
 
         budgetRepository.delete(budget);
+    }
+
+    public BudgetResponseDTO updateBudget(BudgetRequestDTO budgetRequestDTO, UUID userId, Long budgetId) {
+        if (budgetId == null || userId == null) {
+            throw new IllegalArgumentException("Budget ID and User ID cannot be null");
+        }
+
+        // Check if user exists
+        UserProfile user = userService.findUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        Budget existingBudget = user
+                .getBudgets()
+                .stream()
+                .filter(b -> b.getId().equals(budgetId))
+                .findAny()
+                .orElseThrow(() -> new BudgetNotFoundException(budgetId));
+
+
+        if(budgetRequestDTO.getAmountAllocated().compareTo(existingBudget.getAmountSpent()) < 0) {
+            throw new IllegalArgumentException("Allocated amount cannot be less than the amount already spent.");
+        }
+
+        if(budgetRequestDTO.getTitle() != null){
+            existingBudget.setTitle(budgetRequestDTO.getTitle());
+        }
+        if(budgetRequestDTO.getDescription() != null){
+            existingBudget.setDescription(budgetRequestDTO.getDescription());
+        }
+        if(budgetRequestDTO.getFromDate() != null){
+            existingBudget.setFromDate(budgetRequestDTO.getFromDate());
+        }
+        if(budgetRequestDTO.getToDate() != null){
+            existingBudget.setToDate(budgetRequestDTO.getToDate());
+        }
+        if(budgetRequestDTO.getAmountAllocated() != null){
+            existingBudget.setAmountAllocated(budgetRequestDTO.getAmountAllocated());
+        }
+
+        // Recalculate balance
+        existingBudget.setBalance(existingBudget.getAmountAllocated().subtract(existingBudget.getAmountSpent()));
+        budgetRepository.save(existingBudget);
+        return BudgetMapper.toDTO(existingBudget);
+
     }
 }
