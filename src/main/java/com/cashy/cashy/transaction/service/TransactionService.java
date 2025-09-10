@@ -32,8 +32,8 @@ public class TransactionService {
     }
 
 //    creates a new transaction
-    public TransactionResponseDTO createTransaction(TransactionRequestDTO requestDTO){
-        UserProfile user = findUserOrThrow(requestDTO.getUserId()).get();
+    public TransactionResponseDTO createTransaction(TransactionRequestDTO requestDTO, UUID userId){
+        UserProfile user = findUserOrThrow(userId).get();
         Category category = categoryService.getCategoryById(requestDTO.getCategoryId());
         Transaction newTransaction = TransactionMapper.toEntity(requestDTO);
         newTransaction.setCategory(category);
@@ -65,13 +65,13 @@ public class TransactionService {
                 .toList();
     }
 
-    public TransactionResponseDTO updateTransaction(Long transactionId, TransactionRequestDTO requestDTO) {
+    public TransactionResponseDTO updateTransaction(Long transactionId, TransactionRequestDTO requestDTO, UUID userId) {
         // find the user or throw exception
-        Optional<UserProfile> user = findUserOrThrow(requestDTO.getUserId());
+        Optional<UserProfile> user = findUserOrThrow(userId);
 
         // find the transaction for this user
         Transaction transaction = transactionRepository
-                .findByUserProfileIdAndId(requestDTO.getUserId(), transactionId)
+                .findByUserProfileIdAndId(userId, transactionId)
                 .orElseThrow(() -> new RuntimeException("transaction not found"));
 
         // update only provided fields

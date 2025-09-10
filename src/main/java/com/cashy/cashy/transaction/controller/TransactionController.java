@@ -23,8 +23,7 @@ public class TransactionController {
             @RequestBody TransactionRequestDTO requestDTO,
             @PathVariable UUID userId
     ){
-        requestDTO.setUserId(userId);
-        TransactionResponseDTO response = transactionService.createTransaction(requestDTO);
+        TransactionResponseDTO response = transactionService.createTransaction(requestDTO, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -45,8 +44,7 @@ public class TransactionController {
             @PathVariable UUID userId,
             @RequestBody TransactionRequestDTO requestDTO
     ){
-        requestDTO.setUserId(userId);
-        return ResponseEntity.ok().body(transactionService.updateTransaction(transactionId,requestDTO));
+        return ResponseEntity.ok().body(transactionService.updateTransaction(transactionId,requestDTO,userId));
     }
 
     @DeleteMapping("/{transactionId}")

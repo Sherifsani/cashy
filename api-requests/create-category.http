@@ -1,6 +1,0 @@
-POST http://localhost:8080/api/users/5b37b482-e250-4c2b-9ded-69def2b7b9f9/categories
-Content-Type: application/json
-
-{
-  "categoryName": "Education"
-}

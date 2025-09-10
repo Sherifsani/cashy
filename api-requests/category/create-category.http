@@ -1,0 +1,6 @@
+POST http://localhost:8080/api/users/1a55457b-0295-4192-9ce0-91fd958dedc8/categories
+Content-Type: application/json
+
+{
+  "categoryName": "Education"
+}
