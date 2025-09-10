@@ -1,8 +1,8 @@
 package com.cashy.cashy.auth.model;
 
+import com.cashy.cashy.budget.model.Budget;
 import com.cashy.cashy.category.model.Category;
 import com.cashy.cashy.transaction.model.Transaction;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -44,6 +44,9 @@ public class UserProfile {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile", orphanRemoval = true)
     private List<Category> categories = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile", orphanRemoval = true)
+    private List<Budget> budgets = new ArrayList<>();
 
 /*    TODO: add feature for activation via email after registration
     private boolean isActive;

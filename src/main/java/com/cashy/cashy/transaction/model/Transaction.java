@@ -1,6 +1,7 @@
 package com.cashy.cashy.transaction.model;
 
 import com.cashy.cashy.auth.model.UserProfile;
+import com.cashy.cashy.budget.model.Budget;
 import com.cashy.cashy.category.model.Category;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,7 +9,6 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -37,7 +37,10 @@ public class Transaction {
     private UserProfile userProfile;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id",  nullable = false)
+    @JoinColumn(name = "category_id")
     private Category category;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "budget_id", nullable = true)
+    private Budget budget;
 }

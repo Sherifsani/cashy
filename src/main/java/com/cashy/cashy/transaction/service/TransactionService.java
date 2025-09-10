@@ -25,7 +25,6 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserService userService;
     private final CategoryService categoryService;
-
 //    helper function to find a user
     public Optional<UserProfile> findUserOrThrow(UUID userId){
         return userService.findUserById(userId);
