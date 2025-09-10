@@ -1,9 +1,10 @@
-POST http://localhost:8080/api/users/1a55457b-0295-4192-9ce0-91fd958dedc8/transactions
+POST http://localhost:8080/api/users/745fcec1-e6ac-4d6f-9760-ae6a0224c121/transactions
 Content-Type: application/json
 
 {
-  "amount": "136500.00",
-  "description": "salary",
-  "transactionType": "INCOME",
-  "categoryId": "79233d6f-0bc2-478e-ad8a-ef543982768c"
+  "amount": "400.00",
+  "description": "paid for groceries",
+  "transactionType": "EXPENSE",
+  "categoryId": "d8db6a64-6a83-492f-b582-d4f8a4baf48e",
+  "budgetId": 1
 }

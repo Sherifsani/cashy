@@ -1,6 +1,6 @@
-POST http://localhost:8080/api/users/1a55457b-0295-4192-9ce0-91fd958dedc8/categories
+POST http://localhost:8080/api/users/745fcec1-e6ac-4d6f-9760-ae6a0224c121/categories
 Content-Type: application/json
 
 {
-  "categoryName": "Education"
+  "categoryName": "Salary"
 }

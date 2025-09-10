@@ -5,6 +5,7 @@ import com.cashy.cashy.transaction.model.Transaction;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,11 +20,11 @@ public class Budget {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private double amountAllocated;
+    private BigDecimal amountAllocated;
 
-    private double amountSpent;
+    private BigDecimal amountSpent;
 
-    private double balance;
+    private BigDecimal balance;
 
     private String title;
 

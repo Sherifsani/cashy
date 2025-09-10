@@ -24,4 +24,6 @@ public class TransactionRequestDTO {
 
     @NotNull(message = "category id is missing")
     private UUID categoryId;
+
+    private Long budgetId;
 }

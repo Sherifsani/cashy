@@ -1,11 +1,10 @@
-POST http://localhost:8080/api/users/3996d264-9900-4a0c-8273-f129a0261b3c/budgets
+POST http://localhost:8080/api/users/745fcec1-e6ac-4d6f-9760-ae6a0224c121/budgets
 Content-Type: application/json
 
 {
-    "budgetName": "Monthly Budget",
-    "amountAllocated": 2000,
+    "title": "Monthly Budget",
+    "amountAllocated": "20000",
     "fromDate": "2024-01-01",
     "toDate": "2024-01-31",
-      "description": "just to track my monthly expenses",
-      "title": "monthly budget"
+    "description": "just to track my monthly expenses"
 }

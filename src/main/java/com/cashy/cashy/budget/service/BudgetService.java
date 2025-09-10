@@ -12,6 +12,7 @@ import com.cashy.cashy.transaction.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,7 +36,7 @@ public class BudgetService {
                 .userProfile(optionalUserProfile.get())
                 .fromDate(budgetRequestDTO.getFromDate())
                 .toDate(budgetRequestDTO.getToDate())
-                .amountSpent(0.0)
+                .amountSpent(new BigDecimal("0.0"))
                 .balance(budgetRequestDTO.getAmountAllocated())
                 .build();
         budgetRepository.save(newBudget);
@@ -50,6 +51,10 @@ public class BudgetService {
         UserProfile user = optionalUserProfile.get();
         List<Budget> budgets = user.getBudgets();
         return budgets.stream().map(BudgetMapper::toDTO).collect(Collectors.toList());
+    }
+
+    public Optional<Budget> getBudgetById(Long budgetId) {
+        return budgetRepository.findById(budgetId);
     }
 
     public void deleteBudget(Long budgetId, UUID userId) {

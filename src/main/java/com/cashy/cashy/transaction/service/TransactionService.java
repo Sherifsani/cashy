@@ -3,6 +3,8 @@ package com.cashy.cashy.transaction.service;
 import com.cashy.cashy.auth.exception.TransactionNotFound;
 import com.cashy.cashy.auth.model.UserProfile;
 import com.cashy.cashy.auth.service.UserService;
+import com.cashy.cashy.budget.model.Budget;
+import com.cashy.cashy.budget.service.BudgetService;
 import com.cashy.cashy.category.model.Category;
 import com.cashy.cashy.category.service.CategoryService;
 import com.cashy.cashy.transaction.dto.TransactionRequestDTO;
@@ -25,6 +27,8 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserService userService;
     private final CategoryService categoryService;
+    private final BudgetService budgetService;
+
 //    helper function to find a user
     public Optional<UserProfile> findUserOrThrow(UUID userId){
         return userService.findUserById(userId);
@@ -37,10 +41,18 @@ public class TransactionService {
         Transaction newTransaction = TransactionMapper.toEntity(requestDTO);
         newTransaction.setCategory(category);
         newTransaction.setUserProfile(user);
+        if(requestDTO.getBudgetId() != null) {
+            Budget budget = budgetService.getBudgetById(requestDTO.getBudgetId()).orElseThrow(() -> new RuntimeException("budget not found"));
+            budget.setAmountSpent(budget.getAmountSpent().add(requestDTO.getAmount()));
+            budget.setBalance(budget.getAmountAllocated().subtract(budget.getAmountSpent()));
+            newTransaction.setBudget(budget);
+        }
         user.getTransactions().add(newTransaction);
         userService.saveUser(user);
         return TransactionMapper.toResponseDTO(newTransaction);
     }
+
+
 
 //    fetch all transactions for a particular user
     public List<TransactionResponseDTO> getTransactionsByUserId(UUID userId){
