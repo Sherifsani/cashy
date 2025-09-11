@@ -8,7 +8,9 @@ import com.cashy.cashy.budget.dto.BudgetResponseDTO;
 import com.cashy.cashy.budget.exceptions.BudgetNotFoundException;
 import com.cashy.cashy.budget.model.Budget;
 import com.cashy.cashy.budget.repository.BudgetRepository;
+import com.cashy.cashy.transaction.dto.TransactionResponseDTO;
 import com.cashy.cashy.transaction.exception.UserNotFoundException;
+import com.cashy.cashy.transaction.mapper.TransactionMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,12 @@ import java.util.stream.Collectors;
 public class BudgetService {
     private final BudgetRepository budgetRepository;
     private final UserService userService;
+
+    public void validateArgument(Long budgetId, UUID userId){
+        if (budgetId == null || userId == null) {
+            throw new IllegalArgumentException("Budget ID and User ID cannot be null");
+        }
+    }
 
     public BudgetResponseDTO createBudget(BudgetRequestDTO budgetRequestDTO, UUID userId) {
 
@@ -59,65 +67,71 @@ public class BudgetService {
     }
 
     public void deleteBudget(Long budgetId, UUID userId) {
-        if (budgetId == null || userId == null) {
-            throw new IllegalArgumentException("Budget ID and User ID cannot be null");
-        }
+        validateArgument(budgetId, userId);
 
         // Check if user exists
         UserProfile user = userService.findUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        Budget budget = user
-                .getBudgets()
-                .stream()
-                .filter(b -> b.getId().equals(budgetId))
-                .findAny()
+        Budget budget = budgetRepository
+                .findByIdAndUserProfile_Id(budgetId, userId)
                 .orElseThrow(() -> new BudgetNotFoundException(budgetId));
 
         budgetRepository.delete(budget);
     }
 
     public BudgetResponseDTO updateBudget(BudgetRequestDTO budgetRequestDTO, UUID userId, Long budgetId) {
-        if (budgetId == null || userId == null) {
-            throw new IllegalArgumentException("Budget ID and User ID cannot be null");
-        }
+        validateArgument(budgetId, userId);
 
         // Check if user exists
         UserProfile user = userService.findUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        Budget existingBudget = user
-                .getBudgets()
-                .stream()
-                .filter(b -> b.getId().equals(budgetId))
-                .findAny()
+        Budget budget = budgetRepository
+                .findByIdAndUserProfile_Id(budgetId, userId)
                 .orElseThrow(() -> new BudgetNotFoundException(budgetId));
 
 
-        if(budgetRequestDTO.getAmountAllocated().compareTo(existingBudget.getAmountSpent()) < 0) {
+        if(budgetRequestDTO.getAmountAllocated().compareTo(budget.getAmountSpent()) < 0) {
             throw new IllegalArgumentException("Allocated amount cannot be less than the amount already spent.");
         }
-
         if(budgetRequestDTO.getTitle() != null){
-            existingBudget.setTitle(budgetRequestDTO.getTitle());
+            budget.setTitle(budgetRequestDTO.getTitle());
         }
         if(budgetRequestDTO.getDescription() != null){
-            existingBudget.setDescription(budgetRequestDTO.getDescription());
+            budget.setDescription(budgetRequestDTO.getDescription());
         }
         if(budgetRequestDTO.getFromDate() != null){
-            existingBudget.setFromDate(budgetRequestDTO.getFromDate());
+            budget.setFromDate(budgetRequestDTO.getFromDate());
         }
         if(budgetRequestDTO.getToDate() != null){
-            existingBudget.setToDate(budgetRequestDTO.getToDate());
+            budget.setToDate(budgetRequestDTO.getToDate());
         }
         if(budgetRequestDTO.getAmountAllocated() != null){
-            existingBudget.setAmountAllocated(budgetRequestDTO.getAmountAllocated());
+            budget.setAmountAllocated(budgetRequestDTO.getAmountAllocated());
         }
 
         // Recalculate balance
-        existingBudget.setBalance(existingBudget.getAmountAllocated().subtract(existingBudget.getAmountSpent()));
-        budgetRepository.save(existingBudget);
-        return BudgetMapper.toDTO(existingBudget);
+        budget.setBalance(budget.getAmountAllocated().subtract(budget.getAmountSpent()));
+        budgetRepository.save(budget);
+        return BudgetMapper.toDTO(budget);
+    }
 
+//    fetch transactions for each budget for user
+    public List<TransactionResponseDTO> getAllTransactionsForBudget(UUID userId, Long budgetId){
+        validateArgument(budgetId, userId);
+
+        // Check if user exists
+        UserProfile user = userService.findUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        Budget budget = budgetRepository
+                .findByIdAndUserProfile_Id(budgetId, userId)
+                .orElseThrow(() -> new BudgetNotFoundException(budgetId));
+
+        return budget.getTransactions()
+                .stream()
+                .map(TransactionMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 }

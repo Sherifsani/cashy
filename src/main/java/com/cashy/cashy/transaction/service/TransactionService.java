@@ -1,8 +1,9 @@
 package com.cashy.cashy.transaction.service;
 
-import com.cashy.cashy.auth.exception.TransactionNotFound;
+import com.cashy.cashy.auth.exception.TransactionNotFoundException;
 import com.cashy.cashy.auth.model.UserProfile;
 import com.cashy.cashy.auth.service.UserService;
+import com.cashy.cashy.budget.exceptions.BudgetNotFoundException;
 import com.cashy.cashy.budget.model.Budget;
 import com.cashy.cashy.budget.service.BudgetService;
 import com.cashy.cashy.category.model.Category;
@@ -29,20 +30,21 @@ public class TransactionService {
     private final CategoryService categoryService;
     private final BudgetService budgetService;
 
-//    helper function to find a user
-    public Optional<UserProfile> findUserOrThrow(UUID userId){
+    // helper function to find a user
+    public Optional<UserProfile> findUserOrThrow(UUID userId) {
         return userService.findUserById(userId);
     }
 
-//    creates a new transaction
-    public TransactionResponseDTO createTransaction(TransactionRequestDTO requestDTO, UUID userId){
+    // creates a new transaction
+    public TransactionResponseDTO createTransaction(TransactionRequestDTO requestDTO, UUID userId) {
         UserProfile user = findUserOrThrow(userId).get();
         Category category = categoryService.getCategoryById(requestDTO.getCategoryId());
         Transaction newTransaction = TransactionMapper.toEntity(requestDTO);
         newTransaction.setCategory(category);
         newTransaction.setUserProfile(user);
-        if(requestDTO.getBudgetId() != null) {
-            Budget budget = budgetService.getBudgetById(requestDTO.getBudgetId()).orElseThrow(() -> new RuntimeException("budget not found"));
+        if (requestDTO.getBudgetId() != null) {
+            Budget budget = budgetService.getBudgetById(requestDTO.getBudgetId())
+                    .orElseThrow(() -> new BudgetNotFoundException(requestDTO.getBudgetId()));
             budget.setAmountSpent(budget.getAmountSpent().add(requestDTO.getAmount()));
             budget.setBalance(budget.getAmountAllocated().subtract(budget.getAmountSpent()));
             newTransaction.setBudget(budget);
@@ -52,10 +54,8 @@ public class TransactionService {
         return TransactionMapper.toResponseDTO(newTransaction);
     }
 
-
-
-//    fetch all transactions for a particular user
-    public List<TransactionResponseDTO> getTransactionsByUserId(UUID userId){
+    // fetch all transactions for a particular user
+    public List<TransactionResponseDTO> getTransactionsByUserId(UUID userId) {
         UserProfile user = findUserOrThrow(userId).get();
 
         return user
@@ -65,8 +65,8 @@ public class TransactionService {
                 .toList();
     }
 
-//    fetch transactions for each user by transaction type
-    public List<TransactionResponseDTO> getTransactionsByTypeForUser(UUID userId, TransactionType type){
+    // fetch transactions for each user by transaction type
+    public List<TransactionResponseDTO> getTransactionsByTypeForUser(UUID userId, TransactionType type) {
         UserProfile user = findUserOrThrow(userId).get();
         return user
                 .getTransactions()
@@ -77,13 +77,14 @@ public class TransactionService {
     }
 
     public TransactionResponseDTO updateTransaction(Long transactionId, TransactionRequestDTO requestDTO, UUID userId) {
-        // find the user or throw exception
-        Optional<UserProfile> user = findUserOrThrow(userId);
+        // validate user exists
+        findUserOrThrow(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         // find the transaction for this user
         Transaction transaction = transactionRepository
                 .findByUserProfileIdAndId(userId, transactionId)
-                .orElseThrow(() -> new RuntimeException("transaction not found"));
+                .orElseThrow(() -> new TransactionNotFoundException(transactionId));
 
         // update only provided fields
         if (requestDTO.getAmount() != null) {
@@ -106,10 +107,11 @@ public class TransactionService {
         UserProfile user = findUserOrThrow(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        Transaction transaction = user.getTransactions().stream()
+        // Verify transaction exists and belongs to user
+        user.getTransactions().stream()
                 .filter(t -> t.getId().equals(transactionId))
                 .findFirst()
-                .orElseThrow(() -> new TransactionNotFound(transactionId));
+                .orElseThrow(() -> new TransactionNotFoundException(transactionId));
 
         transactionRepository.deleteById(transactionId);
     }

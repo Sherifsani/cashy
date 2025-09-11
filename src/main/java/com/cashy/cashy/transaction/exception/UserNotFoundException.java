@@ -1,9 +1,11 @@
 package com.cashy.cashy.transaction.exception;
 
+import com.cashy.cashy.exception.ResourceNotFoundException;
+
 import java.util.UUID;
 
-public class UserNotFoundException extends RuntimeException{
+public class UserNotFoundException extends ResourceNotFoundException {
     public UserNotFoundException(UUID userId) {
-        super(String.format("User id %s not found", userId));
+        super("User", userId);
     }
 }

@@ -3,6 +3,7 @@ package com.cashy.cashy.category.controller;
 import com.cashy.cashy.category.dto.CategoryRequestDTO;
 import com.cashy.cashy.category.dto.CategoryResponseDTO;
 import com.cashy.cashy.category.service.CategoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,24 +21,22 @@ public class CategoryController {
     @PostMapping
     public ResponseEntity<CategoryResponseDTO> createCategory(
             @PathVariable UUID userId,
-            @RequestBody CategoryRequestDTO categoryRequestDTO
-            ){
-        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(userId, categoryRequestDTO));
+            @RequestBody @Valid CategoryRequestDTO categoryRequestDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(categoryService.createCategory(userId, categoryRequestDTO));
     }
 
     @GetMapping
     public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(
-            @PathVariable UUID userId
-    ) {
+            @PathVariable UUID userId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.getCategories());
     }
 
     @DeleteMapping("/{categoryId}")
-    public ResponseEntity<String> deleteCategory(
+    public ResponseEntity<Void> deleteCategory(
             @PathVariable UUID categoryId,
-            @PathVariable UUID userId
-    ){
+            @PathVariable UUID userId) {
         categoryService.deleteCategory(userId, categoryId);
-        return ResponseEntity.ok("Category deleted successfully");
+        return ResponseEntity.noContent().build();
     }
 }

@@ -4,6 +4,7 @@ import com.cashy.cashy.transaction.dto.TransactionRequestDTO;
 import com.cashy.cashy.transaction.dto.TransactionResponseDTO;
 import com.cashy.cashy.transaction.model.TransactionType;
 import com.cashy.cashy.transaction.service.TransactionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +21,8 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity<TransactionResponseDTO> createTransaction(
-            @RequestBody TransactionRequestDTO requestDTO,
-            @PathVariable UUID userId
-    ){
+            @RequestBody @Valid TransactionRequestDTO requestDTO,
+            @PathVariable UUID userId) {
         TransactionResponseDTO response = transactionService.createTransaction(requestDTO, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -30,9 +30,8 @@ public class TransactionController {
     @GetMapping
     public ResponseEntity<List<TransactionResponseDTO>> getTransactions(
             @PathVariable UUID userId,
-            @RequestParam(required = false) TransactionType transactionType
-            ){
-        if(transactionType == null){
+            @RequestParam(required = false) TransactionType transactionType) {
+        if (transactionType == null) {
             return ResponseEntity.ok(transactionService.getTransactionsByUserId(userId));
         }
         return ResponseEntity.ok(transactionService.getTransactionsByTypeForUser(userId, transactionType));
@@ -42,20 +41,16 @@ public class TransactionController {
     public ResponseEntity<TransactionResponseDTO> updateTransaction(
             @PathVariable Long transactionId,
             @PathVariable UUID userId,
-            @RequestBody TransactionRequestDTO requestDTO
-    ){
-        return ResponseEntity.ok().body(transactionService.updateTransaction(transactionId,requestDTO,userId));
+            @RequestBody @Valid TransactionRequestDTO requestDTO) {
+        return ResponseEntity.ok().body(transactionService.updateTransaction(transactionId, requestDTO, userId));
     }
 
     @DeleteMapping("/{transactionId}")
     public ResponseEntity<Void> deleteTransaction(
             @PathVariable UUID userId,
-            @PathVariable Long transactionId
-    ) {
+            @PathVariable Long transactionId) {
         transactionService.deleteTransaction(transactionId, userId);
         return ResponseEntity.noContent().build(); // 204 No Content
     }
-
-
 
 }

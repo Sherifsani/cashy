@@ -1,9 +1,10 @@
 package com.cashy.cashy.budget.exceptions;
 
-public class BudgetNotFoundException extends RuntimeException {
+import com.cashy.cashy.exception.ResourceNotFoundException;
+
+public class BudgetNotFoundException extends ResourceNotFoundException {
 
     public BudgetNotFoundException(Long budgetId) {
-
-        super("Budget not found with ID: " + budgetId);
+        super("Budget", budgetId);
     }
 }

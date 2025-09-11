@@ -3,7 +3,7 @@ package com.cashy.cashy.auth.service;
 import com.cashy.cashy.auth.dto.UserLoginRequestDTO;
 import com.cashy.cashy.auth.dto.UserSignupResponseDTO;
 import com.cashy.cashy.auth.exception.EmailAlreadyExistsException;
-import com.cashy.cashy.auth.exception.InvalidCredentials;
+import com.cashy.cashy.auth.exception.InvalidCredentialsException;
 import com.cashy.cashy.auth.model.UserProfile;
 import com.cashy.cashy.auth.dto.UserProfileSignupDTO;
 import com.cashy.cashy.auth.mapper.UserProfileMapper;
@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,7 +24,7 @@ public class UserService {
     private final JwtUtil jwtUtil;
 
     public UserSignupResponseDTO registerUser(UserProfileSignupDTO userProfileSignupDTO) {
-        if(userProfileRepository.existsByEmail(userProfileSignupDTO.getEmail())) {
+        if (userProfileRepository.existsByEmail(userProfileSignupDTO.getEmail())) {
             throw new EmailAlreadyExistsException(userProfileSignupDTO.getEmail());
         }
         userProfileSignupDTO.setPassword(passwordEncoder.encode(userProfileSignupDTO.getPassword()));
@@ -44,7 +43,7 @@ public class UserService {
                 .filter(user -> passwordEncoder.matches(loginDTO.getPassword(), user.getPassword()))
                 .map(user -> jwtUtil.generateToken(user.getEmail(), user.getRole().name()))
                 .or(() -> {
-                    throw new InvalidCredentials("Invalid email or password.");
+                    throw new InvalidCredentialsException("Invalid email or password.");
                 });
     }
 
@@ -52,11 +51,11 @@ public class UserService {
         userProfileRepository.save(userProfile);
     }
 
-    public Optional<UserProfile > findUserById(UUID userId) {
+    public Optional<UserProfile> findUserById(UUID userId) {
         return userProfileRepository.findById(userId);
     }
 
-    public boolean UserExistsById(UUID userId){
+    public boolean UserExistsById(UUID userId) {
         return userProfileRepository.existsById(userId);
     }
 

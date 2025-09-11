@@ -1,4 +1,4 @@
-POST http://localhost:8080/api/users/745fcec1-e6ac-4d6f-9760-ae6a0224c121/budgets
+POST http://localhost:8080/api/users/d1f32775-99eb-4046-ae8e-fc25ae4b8c71/budgets
 Content-Type: application/json
 
 {
