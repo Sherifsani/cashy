@@ -6,6 +6,8 @@ import com.cashy.cashy.transaction.model.TransactionType;
 import com.cashy.cashy.transaction.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,13 +30,15 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TransactionResponseDTO>> getTransactions(
+    public ResponseEntity<Page<TransactionResponseDTO>> getTransactions(
             @PathVariable UUID userId,
-            @RequestParam(required = false) TransactionType transactionType) {
+            @RequestParam(required = false) TransactionType transactionType,
+            Pageable pageable) {
+
         if (transactionType == null) {
-            return ResponseEntity.ok(transactionService.getTransactionsByUserId(userId));
+            return ResponseEntity.ok(transactionService.getTransactionsByUserId(userId, pageable));
         }
-        return ResponseEntity.ok(transactionService.getTransactionsByTypeForUser(userId, transactionType));
+        return ResponseEntity.ok(transactionService.getTransactionsByTypeForUser(userId, transactionType, pageable));
     }
 
     @PutMapping("/{transactionId}")

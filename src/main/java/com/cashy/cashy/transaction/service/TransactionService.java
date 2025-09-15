@@ -16,6 +16,9 @@ import com.cashy.cashy.transaction.model.Transaction;
 import com.cashy.cashy.transaction.model.TransactionType;
 import com.cashy.cashy.transaction.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,13 +34,13 @@ public class TransactionService {
     private final BudgetService budgetService;
 
     // helper function to find a user
-    public Optional<UserProfile> findUserOrThrow(UUID userId) {
-        return userService.findUserById(userId);
+    public UserProfile findUserOrThrow(UUID userId) {
+        return userService.findUserById(userId).orElseThrow(() -> new UserNotFoundException(userId));
     }
 
     // creates a new transaction
     public TransactionResponseDTO createTransaction(TransactionRequestDTO requestDTO, UUID userId) {
-        UserProfile user = findUserOrThrow(userId).get();
+        UserProfile user = findUserOrThrow(userId);
         Category category = categoryService.getCategoryById(requestDTO.getCategoryId());
         Transaction newTransaction = TransactionMapper.toEntity(requestDTO);
         newTransaction.setCategory(category);
@@ -54,33 +57,18 @@ public class TransactionService {
         return TransactionMapper.toResponseDTO(newTransaction);
     }
 
-    // fetch all transactions for a particular user
-    public List<TransactionResponseDTO> getTransactionsByUserId(UUID userId) {
-        UserProfile user = findUserOrThrow(userId).get();
 
-        return user
-                .getTransactions()
-                .stream()
-                .map(TransactionMapper::toResponseDTO)
-                .toList();
+    public Page<TransactionResponseDTO> getTransactionsByUserId(UUID userId, Pageable pageable) {
+        UserProfile user = findUserOrThrow(userId);
+        return transactionRepository.findByUserProfile(user, pageable)
+                .map(TransactionMapper::toResponseDTO);
     }
 
-    // fetch transactions for each user by transaction type
-    public List<TransactionResponseDTO> getTransactionsByTypeForUser(UUID userId, TransactionType type) {
-        UserProfile user = findUserOrThrow(userId).get();
-        return user
-                .getTransactions()
-                .stream()
-                .filter(transaction -> transaction.getTransactionType() == type)
-                .map(TransactionMapper::toResponseDTO)
-                .toList();
+    public Page<TransactionResponseDTO> getTransactionsByTypeForUser(UUID userId, TransactionType type, Pageable pageable) {
+        return transactionRepository.findByUserProfileIdAndTransactionType(userId, type, pageable)
+                .map(TransactionMapper::toResponseDTO);
     }
-
     public TransactionResponseDTO updateTransaction(Long transactionId, TransactionRequestDTO requestDTO, UUID userId) {
-        // validate user exists
-        findUserOrThrow(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
-
         // find the transaction for this user
         Transaction transaction = transactionRepository
                 .findByUserProfileIdAndId(userId, transactionId)
@@ -104,16 +92,15 @@ public class TransactionService {
     }
 
     public void deleteTransaction(Long transactionId, UUID userId) {
-        UserProfile user = findUserOrThrow(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+        UserProfile user = findUserOrThrow(userId);
 
         // Verify transaction exists and belongs to user
-        user.getTransactions().stream()
+        Transaction transaction = user.getTransactions().stream()
                 .filter(t -> t.getId().equals(transactionId))
                 .findFirst()
                 .orElseThrow(() -> new TransactionNotFoundException(transactionId));
 
-        transactionRepository.deleteById(transactionId);
+        transactionRepository.delete(transaction);
     }
 
 }

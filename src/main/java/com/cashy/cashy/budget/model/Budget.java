@@ -41,4 +41,8 @@ public class Budget {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "budget",orphanRemoval = true)
     private List<Transaction> transactions;
 
+    public void getStatus(){
+
+    }
+
 }

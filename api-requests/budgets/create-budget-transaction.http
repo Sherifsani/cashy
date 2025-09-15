@@ -1,0 +1,10 @@
+POST http://localhost:8080/api/users/458e8649-c4fc-48bf-b7ee-de589e85038f/transactions
+Content-Type: application/json
+
+{
+  "amount": "5800.00",
+  "description": "random 5",
+  "transactionType": "INCOME",
+  "categoryId": "30dd17c3-9c23-4951-af53-120918723228",
+  "budgetId": 1
+}
