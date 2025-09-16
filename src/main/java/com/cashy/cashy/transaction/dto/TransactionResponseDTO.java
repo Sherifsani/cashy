@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Builder
 @Getter
@@ -16,4 +17,5 @@ public class TransactionResponseDTO {
     private String description;
     private TransactionType transactionType;
     private String categoryName;
+    private LocalDate transactionDate;
 }

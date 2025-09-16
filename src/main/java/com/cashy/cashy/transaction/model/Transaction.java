@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -24,6 +25,8 @@ public class Transaction {
     private BigDecimal amount;
 
     private String description;
+
+    private LocalDate transactionDate;
 
     @CreationTimestamp
     @Column(updatable = false)

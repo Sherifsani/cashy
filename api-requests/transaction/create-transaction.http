@@ -1,9 +1,9 @@
-POST http://localhost:8080/api/users/458e8649-c4fc-48bf-b7ee-de589e85038f/transactions
+POST http://localhost:8080/api/users/0f4a28e3-11a8-4b7a-97b4-43edbecc96bc/transactions
 Content-Type: application/json
 
 {
-  "amount": "1200.00",
-  "description": "some expense bj",
+  "amount": "8700.00",
+  "description": "some expense 5",
   "transactionType": "EXPENSE",
-  "categoryId": "30dd17c3-9c23-4951-af53-120918723228"
+  "categoryId": "2315909a-021c-44ad-a3fb-abf0709df490"
 }

@@ -1,5 +1,1 @@
-### GET request to example server
-GET https://examples.http-client.intellij.net/get
-    ?generated-in=IntelliJ IDEA
-
-###
+GET http://localhost:8080/api/users/0f4a28e3-11a8-4b7a-97b4-43edbecc96bc/analytics/total?transactionType=INCOME

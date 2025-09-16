@@ -11,6 +11,7 @@ public class TransactionMapper {
                 .amount(requestDTO.getAmount())
                 .description(requestDTO.getDescription())
                 .transactionType(requestDTO.getTransactionType())
+                .transactionDate(requestDTO.getTransactionDate())
                 .build();
     }
 
@@ -21,6 +22,7 @@ public class TransactionMapper {
                 .amount(transaction.getAmount())
                 .transactionType(transaction.getTransactionType())
                 .categoryName(transaction.getCategory().getCategoryName())
+                .transactionDate(transaction.getTransactionDate())
                 .build();
     }
 }

@@ -22,9 +22,11 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final UserService userService;
 
-    // get all categories
-    public List<CategoryResponseDTO> getCategories() {
-        List<Category> categories = categoryRepository.findAll();
+    // get all categories for user
+    public List<CategoryResponseDTO> getCategories(UUID userId) {
+        UserProfile targetUser = userService.findUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+        List<Category> categories = targetUser.getCategories();
         return categories.stream().map(CategoryMapper::toDTO).collect(Collectors.toList());
     }
 

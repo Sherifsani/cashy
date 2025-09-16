@@ -29,7 +29,7 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(
             @PathVariable UUID userId) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.getCategories());
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.getCategories(userId));
     }
 
     @DeleteMapping("/{categoryId}")
