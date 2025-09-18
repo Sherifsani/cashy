@@ -1,14 +1,13 @@
 package com.cashy.cashy.auth.controller;
 
-import com.cashy.cashy.auth.dto.UserLoginRequestDTO;
-import com.cashy.cashy.auth.dto.UserLoginResponseDTO;
-import com.cashy.cashy.auth.dto.UserProfileSignupDTO;
-import com.cashy.cashy.auth.dto.UserSignupResponseDTO;
+import com.cashy.cashy.auth.dto.*;
 import com.cashy.cashy.auth.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -44,6 +43,14 @@ public class AuthController {
         return ResponseEntity.ok(new UserLoginResponseDTO(token));
     }
 
-//    @GetMapping("/me")
-//    public ResponseEntity<>
+    @GetMapping("/me")
+    public ResponseEntity<UserDetailDTO> getCurrentUser(
+            @AuthenticationPrincipal UserDetails userDetails
+            ){
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        UserDetailDTO userDetailDTO = new UserDetailDTO(userDetails.getUsername());
+        return ResponseEntity.ok(userDetailDTO);
+    }
 }
