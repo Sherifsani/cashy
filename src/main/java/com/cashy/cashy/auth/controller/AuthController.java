@@ -16,6 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
     private final UserService userService;
 
@@ -42,4 +43,7 @@ public class AuthController {
         String token = tokenOptional.get();
         return ResponseEntity.ok(new UserLoginResponseDTO(token));
     }
+
+//    @GetMapping("/me")
+//    public ResponseEntity<>
 }
