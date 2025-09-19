@@ -1,6 +1,7 @@
 package com.cashy.cashy.auth.controller;
 
 import com.cashy.cashy.auth.dto.*;
+import com.cashy.cashy.auth.exception.InvalidCredentials;
 import com.cashy.cashy.auth.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,12 +36,16 @@ public class AuthController {
             @Valid
             UserLoginRequestDTO userLoginRequestDTO
             ){
-        Optional<String> tokenOptional = userService.authenticateUser(userLoginRequestDTO);
-        if(tokenOptional.isEmpty()){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        try {
+            Optional<UserLoginResponseDTO> response = userService.authenticateUser(userLoginRequestDTO);
+            if(response.isPresent()) {
+                return ResponseEntity.ok(response.get());
+            }
+        } catch (InvalidCredentials e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(null);
         }
-        String token = tokenOptional.get();
-        return ResponseEntity.ok(new UserLoginResponseDTO(token));
+        return null;
     }
 
     @GetMapping("/me")

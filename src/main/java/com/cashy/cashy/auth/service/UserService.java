@@ -1,6 +1,7 @@
 package com.cashy.cashy.auth.service;
 
 import com.cashy.cashy.auth.dto.UserLoginRequestDTO;
+import com.cashy.cashy.auth.dto.UserLoginResponseDTO;
 import com.cashy.cashy.auth.dto.UserSignupResponseDTO;
 import com.cashy.cashy.auth.exception.EmailAlreadyExistsException;
 import com.cashy.cashy.auth.exception.InvalidCredentials;
@@ -38,10 +39,16 @@ public class UserService {
                 .build();
     }
 
-    public Optional<String> authenticateUser(UserLoginRequestDTO loginDTO) {
+    public Optional<UserLoginResponseDTO> authenticateUser(UserLoginRequestDTO loginDTO) {
         return userProfileRepository.findByEmail(loginDTO.getEmail())
                 .filter(user -> passwordEncoder.matches(loginDTO.getPassword(), user.getPassword()))
-                .map(user -> jwtUtil.generateToken(user.getEmail(), user.getRole().name()))
+                .map(user -> new UserLoginResponseDTO(
+                        jwtUtil.generateToken(user.getEmail(), user.getRole().name()),
+                        user.getId(),
+                        user.getEmail(),
+                        user.getRole().name(),
+                        user.getUsername()
+                ))
                 .or(() -> {
                     throw new InvalidCredentials("Invalid email or password.");
                 });
