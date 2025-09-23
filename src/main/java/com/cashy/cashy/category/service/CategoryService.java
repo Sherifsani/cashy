@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -60,6 +61,22 @@ public class CategoryService {
                 .findAny().orElseThrow(() -> new CategoryNotFoundException(categoryId));
         targetUser.getCategories().remove(category);
         categoryRepository.deleteById(categoryId);
+    }
+
+//    get category by name and userId
+    public Category getCategoryByNameAndUserId(String name, UUID userId) {
+        UserProfile targetUser = userService.findUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+        Optional<Category> category =  categoryRepository.findCategoryByCategoryNameAndUserProfile_Id(name, userId);
+        if (category.isPresent()){
+            return category.get();
+        }else{
+            Category newCategory = new Category();
+            newCategory.setCategoryName(name);
+            newCategory.setUserProfile(targetUser);
+            categoryRepository.save(newCategory);
+            return newCategory;
+        }
     }
 
 }

@@ -1,6 +1,7 @@
-POST http://localhost:8080/api/users/0f4a28e3-11a8-4b7a-97b4-43edbecc96bc/categories
+POST http://localhost:8080/api/users/1ed1dbcf-ff09-449e-bfc3-4cd0893ae52d/categories
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzbGFkZUBnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsImlhdCI6MTc1ODY1NTc2NywiZXhwIjoxNzU4NzQyMTY3fQ.Cm18HPvnHrYQOnQ2xPSxx38fsvz4uzSGpNGGKqGNB74
 Content-Type: application/json
 
 {
-  "categoryName": "Food"
+  "categoryName": "Food & Dining"
 }

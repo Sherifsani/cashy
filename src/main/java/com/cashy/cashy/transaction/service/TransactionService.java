@@ -41,7 +41,7 @@ public class TransactionService {
     // creates a new transaction
     public TransactionResponseDTO createTransaction(TransactionRequestDTO requestDTO, UUID userId) {
         UserProfile user = findUserOrThrow(userId);
-        Category category = categoryService.getCategoryById(requestDTO.getCategoryId());
+        Category category = categoryService.getCategoryByNameAndUserId(requestDTO.getCategoryName(), userId);
         Transaction newTransaction = TransactionMapper.toEntity(requestDTO);
         newTransaction.setCategory(category);
         newTransaction.setUserProfile(user);

@@ -23,6 +23,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @Column(nullable = false, unique = true)
     private String categoryName;
 
     @CreationTimestamp

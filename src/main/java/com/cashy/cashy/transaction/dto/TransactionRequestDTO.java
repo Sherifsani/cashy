@@ -23,8 +23,8 @@ public class TransactionRequestDTO {
     @NotNull(message = "transaction type should be income or expense")
     private TransactionType transactionType;
 
-    @NotNull(message = "category id is missing")
-    private UUID categoryId;
+    @NotNull(message = "category name is missing")
+    private String categoryName;
 
     private Long budgetId;
 

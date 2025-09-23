@@ -25,22 +25,19 @@ public class DashboardService {
     public DashboardDTO getDashboardData(UUID userId) {
         UserProfile user = userService.findUserById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         String username = user.getUsername();
-//        BigDecimal totalIncome = analyticsService.getTotalTransactions(userId, TransactionType.INCOME);
-//        BigDecimal totalExpense = analyticsService.getTotalTransactions(userId, TransactionType.EXPENSE);
-//        List<Transaction> recentTransactions = user.getTransactions().stream()
-//                .sorted((t1, t2) -> t2.getTransactionDate().compareTo(t1.getTransactionDate()))
-//                .limit(5)
-//                .toList();
-//        BigDecimal totalBalance = totalIncome.subtract(totalExpense);
+        BigDecimal totalIncome = analyticsService.getTotalTransactions(userId, TransactionType.INCOME);
+        BigDecimal totalExpense = analyticsService.getTotalTransactions(userId, TransactionType.EXPENSE);
+        List<Transaction> recentTransactions = user.getTransactions().subList(Math.max(0, user.getTransactions().size() - 5), user.getTransactions().size());
+        BigDecimal totalBalance = totalIncome.subtract(totalExpense);
         return DashboardDTO.builder()
                 .userId(userId)
                 .username(username)
-//                .totalIncome(totalIncome)
-//                .totalExpense(totalExpense)
-//                .totalBalance(totalBalance)
-//                .recentTransactions(recentTransactions.stream()
-//                        .map(TransactionMapper::toResponseDTO)
-//                        .toList())
+                .totalIncome(totalIncome)
+                .totalExpense(totalExpense)
+                .totalBalance(totalBalance)
+                .recentTransactions(recentTransactions.stream()
+                        .map(TransactionMapper::toResponseDTO)
+                        .toList())
                 .build();
     }
 }

@@ -15,9 +15,9 @@ import java.util.UUID;
 public class DashboardDTO {
     private UUID userId;
     private String username;
-//    private BigDecimal totalIncome;
-//    private BigDecimal totalExpense;
-//    private BigDecimal totalBalance;
-//    private List<TransactionResponseDTO> recentTransactions;
-//    private Integer totalBudgetUsage;
+    private BigDecimal totalIncome;
+    private BigDecimal totalExpense;
+    private BigDecimal totalBalance;
+    private List<TransactionResponseDTO> recentTransactions;
+    private Integer totalBudgetUsage;
 }

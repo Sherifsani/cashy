@@ -1,2 +1,2 @@
-GET http://localhost:8080/api/users/0f4a28e3-11a8-4b7a-97b4-43edbecc96bc/dashboard
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzbGFkZUBnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsImlhdCI6MTc1ODI3MjIyOCwiZXhwIjoxNzU4MzU4NjI4fQ.rc1sLJ9GMV_Hcl8baCqZcelYLULKgpRvCCLcKOlJEF8
+GET http://localhost:8080/api/users/1ed1dbcf-ff09-449e-bfc3-4cd0893ae52d/dashboard
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzbGFkZUBnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsImlhdCI6MTc1ODY1NTc2NywiZXhwIjoxNzU4NzQyMTY3fQ.Cm18HPvnHrYQOnQ2xPSxx38fsvz4uzSGpNGGKqGNB74
