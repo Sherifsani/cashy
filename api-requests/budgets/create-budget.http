@@ -1,8 +1,9 @@
-POST http://localhost:8080/api/users/458e8649-c4fc-48bf-b7ee-de589e85038f/budgets
+POST http://localhost:8080/api/users/0f4a28e3-11a8-4b7a-97b4-43edbecc96bc/budgets
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzbGFkZUBnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsImlhdCI6MTc1ODI3MTE3OCwiZXhwIjoxNzU4MzU3NTc4fQ.sUMOCMV5gO4UihgSY4ln5Zcm0t-V8rWZmburq-FZkwA
 
 {
-    "title": "Monthly spending plan",
+    "title": "Monthly eating plan",
     "amountAllocated": "20000",
     "fromDate": "2024-01-01",
     "toDate": "2024-01-31",
