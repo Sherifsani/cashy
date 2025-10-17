@@ -1,5 +1,5 @@
 POST http://localhost:8080/api/users/1ed1dbcf-ff09-449e-bfc3-4cd0893ae52d/transactions
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzbGFkZUBnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsImlhdCI6MTc1ODY1NTc2NywiZXhwIjoxNzU4NzQyMTY3fQ.Cm18HPvnHrYQOnQ2xPSxx38fsvz4uzSGpNGGKqGNB74
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzbGFkZUBnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsImlhdCI6MTc1ODcyNjYwNCwiZXhwIjoxNzU4ODEzMDA0fQ.2AN9zm255fGs6662QTzxBjWElLPp-FpoOvteOTDkOM8
 Content-Type: application/json
 
 {

@@ -55,7 +55,9 @@ public class AuthController {
         if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        UserDetailDTO userDetailDTO = new UserDetailDTO(userDetails.getUsername());
+        UserDetailDTO userDetailDTO = UserDetailDTO.builder()
+                .username(userDetails.getUsername())
+                .build();
         return ResponseEntity.ok(userDetailDTO);
     }
 }

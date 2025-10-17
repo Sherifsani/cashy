@@ -58,4 +58,60 @@ public class AnalyticsController {
         Map<String, BigDecimal> categoryData = analyticsService.getSpendingByCategory(userId, fromDate, toDate, transactionType);
         return ResponseEntity.ok(ApiResponse.success("Category breakdown retrieved successfully", categoryData));
     }
+
+    @GetMapping("/monthly-transactions")
+    public ResponseEntity<ApiResponse<Map<String, String>>> getMonthlyTransactions(
+            @PathVariable UUID userId,
+            @RequestParam int year,
+            @RequestParam int month
+    ){
+        LocalDate fromDate = LocalDate.of(year, month, 1);
+        LocalDate toDate = fromDate.withDayOfMonth(fromDate.lengthOfMonth());
+
+        BigDecimal monthlyExpense = analyticsService.getTotalTransactionInPeriod(userId, fromDate, toDate, TransactionType.EXPENSE);
+        BigDecimal monthlyIncome = analyticsService.getTotalTransactionInPeriod(userId, fromDate, toDate, TransactionType.INCOME);
+        int monthlyTransactionCount = analyticsService.getMonthlyTransactionCount(userId, fromDate, toDate);
+        BigDecimal netMonthlyCashFlow = monthlyIncome.subtract(monthlyExpense);
+        Map<String, String> monthlyData = Map.of(
+                "monthlyExpense", monthlyExpense.toString(),
+                "monthlyIncome", monthlyIncome.toString(),
+                "monthlyTransactionCount", String.valueOf(monthlyTransactionCount),
+                "netMonthlyCashFlow", netMonthlyCashFlow.toString()
+        );
+        return ResponseEntity.ok(ApiResponse.success("Monthly transactions data retrieved successfully", monthlyData));
+    }
+
+    @GetMapping("/yearly-summary")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getYearlySummary(
+            @PathVariable UUID userId,
+            @RequestParam int year) {
+        Map<String, Object> summary = analyticsService.getYearlySummary(userId, year);
+        return ResponseEntity.ok(ApiResponse.success("Yearly summary retrieved successfully", summary));
+    }
+
+    @GetMapping("/trends")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getTrends(
+            @PathVariable UUID userId,
+            @RequestParam int months) {
+        Map<String, Object> trends = analyticsService.getTrends(userId, months);
+        return ResponseEntity.ok(ApiResponse.success("Trends retrieved successfully", trends));
+    }
+
+    @GetMapping("/budget-performance")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getBudgetPerformance(@PathVariable UUID userId) {
+        Map<String, Object> performance = analyticsService.getBudgetPerformance(userId);
+        return ResponseEntity.ok(ApiResponse.success("Budget performance retrieved successfully", performance));
+    }
+
+    @GetMapping("/spending-by-category-all")
+    public ResponseEntity<ApiResponse<Map<String, BigDecimal>>> getAllTimeSpendingByCategory(@PathVariable UUID userId) {
+        Map<String, BigDecimal> categoryData = analyticsService.getAllTimeSpendingByCategory(userId);
+        return ResponseEntity.ok(ApiResponse.success("All-time spending by category retrieved successfully", categoryData));
+    }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getDashboardAnalytics(@PathVariable UUID userId) {
+        Map<String, Object> analytics = analyticsService.getDashboardAnalytics(userId);
+        return ResponseEntity.ok(ApiResponse.success("Dashboard analytics retrieved successfully", analytics));
+    }
 }

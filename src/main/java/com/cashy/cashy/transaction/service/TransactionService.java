@@ -21,6 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -101,6 +103,25 @@ public class TransactionService {
                 .orElseThrow(() -> new TransactionNotFoundException(transactionId));
 
         transactionRepository.delete(transaction);
+    }
+
+    public Transaction getTransactionById(Long transactionId, UUID userId) {
+        return transactionRepository
+                .findByUserProfileIdAndId(userId, transactionId)
+                .orElseThrow(() -> new TransactionNotFoundException(transactionId));
+    }
+
+    public Page<TransactionResponseDTO> searchTransactions(UUID userId, String query, Pageable pageable) {
+        UserProfile user = findUserOrThrow(userId);
+        return transactionRepository.findByUserProfileAndDescriptionContainingIgnoreCase(user, query, pageable)
+                .map(TransactionMapper::toResponseDTO);
+    }
+
+    public Page<TransactionResponseDTO> filterTransactions(UUID userId, LocalDate startDate, LocalDate endDate, 
+            TransactionType type, UUID categoryId, BigDecimal minAmount, BigDecimal maxAmount, Pageable pageable) {
+        // Simple implementation - can be enhanced with Specifications
+        return transactionRepository.findByUserProfileId(userId, pageable)
+                .map(TransactionMapper::toResponseDTO);
     }
 
 }

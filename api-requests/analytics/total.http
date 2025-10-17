@@ -1,0 +1,2 @@
+GET http://localhost:8080/api/users/1ed1dbcf-ff09-449e-bfc3-4cd0893ae52d/analytics?TransactionType=EXPENSE
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzbGFkZUBnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsImlhdCI6MTc2MDczNzQ0OCwiZXhwIjoxNzYwODIzODQ4fQ.t58GtULbgand1WmfPSsBJm6ddzj0R2koxC6MnSBY714

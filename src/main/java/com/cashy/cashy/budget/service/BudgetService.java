@@ -24,7 +24,7 @@ public class BudgetService {
     private final BudgetRepository budgetRepository;
     private final UserService userService;
 
-    public void validateArgument(Long budgetId, UUID userId){
+    private void validateArgument(Long budgetId, UUID userId){
         if (budgetId == null || userId == null) {
             throw new IllegalArgumentException("Budget ID and User ID cannot be null");
         }
@@ -131,5 +131,58 @@ public class BudgetService {
                 .stream()
                 .map(TransactionMapper::toResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    //get total budget allocation
+    public BigDecimal getTotalBudgetAllocation(UUID userId){
+        List<Budget> budgets = getAllBudgetsEntity(userId);
+        return budgets.stream()
+                .map(Budget::getAmountAllocated)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public BigDecimal getTotalBudgetSpent(UUID userId){
+        List<Budget> budgets = getAllBudgetsEntity(userId);
+        return budgets.stream()
+                .map(Budget::getAmountSpent)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    //get budget highlights
+    public Map<String, String> getBudgetHighlights(UUID userId){
+        List<Budget> budgets = getAllBudgetsEntity(userId);
+        BigDecimal totalAllocated = budgets.stream()
+                .map(Budget::getAmountAllocated)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalSpent = budgets.stream()
+                .map(Budget::getAmountSpent)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalBalance = totalAllocated.subtract(totalSpent);
+
+        double budgetUsage = 0.0;
+        if (totalAllocated.compareTo(BigDecimal.ZERO) > 0) {
+            budgetUsage = totalSpent.divide(totalAllocated, 4, BigDecimal.ROUND_HALF_UP)
+                    .multiply(BigDecimal.valueOf(100)).doubleValue();
+        }
+
+        Map<String, String> highlights = new HashMap<>();
+        highlights.put("totalAllocated", totalAllocated.toString());
+        highlights.put("totalSpent", totalSpent.toString());
+        highlights.put("totalBalance", totalBalance.toString());
+        highlights.put("budgetUsage", String.format("%.2f", budgetUsage) + "%");
+        return highlights;
+    }
+
+    //calculating budget status
+
+
+    //helper method to get all budgets entity for user
+    private List<Budget> getAllBudgetsEntity(UUID userId){
+        Optional<UserProfile> optionalUserProfile = userService.findUserById(userId);
+        if(optionalUserProfile.isEmpty()){
+            throw new UserNotFoundException(userId);
+        }
+        UserProfile user = optionalUserProfile.get();
+        return user.getBudgets();
     }
 }

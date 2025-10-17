@@ -29,7 +29,22 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(
             @PathVariable UUID userId) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.getCategories(userId));
+        return ResponseEntity.ok(categoryService.getCategories(userId));
+    }
+
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<CategoryResponseDTO> getCategory(
+            @PathVariable UUID userId,
+            @PathVariable UUID categoryId) {
+        return ResponseEntity.ok(categoryService.getCategory(userId, categoryId));
+    }
+
+    @PutMapping("/{categoryId}")
+    public ResponseEntity<CategoryResponseDTO> updateCategory(
+            @PathVariable UUID userId,
+            @PathVariable UUID categoryId,
+            @RequestBody @Valid CategoryRequestDTO categoryRequestDTO) {
+        return ResponseEntity.ok(categoryService.updateCategory(userId, categoryId, categoryRequestDTO));
     }
 
     @DeleteMapping("/{categoryId}")

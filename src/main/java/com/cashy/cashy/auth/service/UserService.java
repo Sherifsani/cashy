@@ -66,4 +66,45 @@ public class UserService {
         return userProfileRepository.existsById(userId);
     }
 
+    public com.cashy.cashy.auth.dto.UserDetailDTO getUserProfile(UUID userId) {
+        UserProfile user = userProfileRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return com.cashy.cashy.auth.dto.UserDetailDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .build();
+    }
+
+    public com.cashy.cashy.auth.dto.UserDetailDTO updateUserProfile(UUID userId, com.cashy.cashy.auth.dto.UserProfileUpdateDTO updateDTO) {
+        UserProfile user = userProfileRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        if (updateDTO.getEmail() != null) {
+            user.setEmail(updateDTO.getEmail());
+        }
+        if (updateDTO.getUsername() != null) {
+            user.setUsername(updateDTO.getUsername());
+        }
+        
+        userProfileRepository.save(user);
+        return getUserProfile(userId);
+    }
+
+    public void changePassword(UUID userId, com.cashy.cashy.auth.dto.PasswordChangeDTO passwordChangeDTO) {
+        UserProfile user = userProfileRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        if (!passwordEncoder.matches(passwordChangeDTO.getCurrentPassword(), user.getPassword())) {
+            throw new RuntimeException("Current password is incorrect");
+        }
+        
+        user.setPassword(passwordEncoder.encode(passwordChangeDTO.getNewPassword()));
+        userProfileRepository.save(user);
+    }
+
+    public void deleteUser(UUID userId) {
+        userProfileRepository.deleteById(userId);
+    }
+
 }

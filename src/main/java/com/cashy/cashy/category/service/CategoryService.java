@@ -79,4 +79,22 @@ public class CategoryService {
         }
     }
 
+    public CategoryResponseDTO getCategory(UUID userId, UUID categoryId) {
+        Category category = categoryRepository.findByIdAndUserProfile_Id(categoryId, userId)
+                .orElseThrow(() -> new CategoryNotFoundException(categoryId));
+        return CategoryMapper.toResponseDTO(category);
+    }
+
+    public CategoryResponseDTO updateCategory(UUID userId, UUID categoryId, CategoryRequestDTO requestDTO) {
+        Category category = categoryRepository.findByIdAndUserProfile_Id(categoryId, userId)
+                .orElseThrow(() -> new CategoryNotFoundException(categoryId));
+        
+        if (requestDTO.getCategoryName() != null) {
+            category.setCategoryName(requestDTO.getCategoryName());
+        }
+        
+        categoryRepository.save(category);
+        return CategoryMapper.toResponseDTO(category);
+    }
+
 }

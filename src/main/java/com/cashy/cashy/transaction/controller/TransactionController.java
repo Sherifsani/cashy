@@ -12,7 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -47,6 +48,28 @@ public class TransactionController {
             @PathVariable UUID userId,
             @RequestBody @Valid TransactionRequestDTO requestDTO) {
         return ResponseEntity.ok().body(transactionService.updateTransaction(transactionId, requestDTO, userId));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<TransactionResponseDTO>> searchTransactions(
+            @PathVariable UUID userId,
+            @RequestParam String query,
+            Pageable pageable) {
+        return ResponseEntity.ok(transactionService.searchTransactions(userId, query, pageable));
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<TransactionResponseDTO>> filterTransactions(
+            @PathVariable UUID userId,
+            @RequestParam(required = false) LocalDate fromDate,
+            @RequestParam(required = false) LocalDate toDate,
+            @RequestParam(required = false) TransactionType type,
+            @RequestParam(required = false) UUID categoryId,
+            @RequestParam(required = false) BigDecimal minAmount,
+            @RequestParam(required = false) BigDecimal maxAmount,
+            Pageable pageable) {
+        return ResponseEntity.ok(transactionService.filterTransactions(
+                userId, fromDate, toDate, type, categoryId, minAmount, maxAmount, pageable));
     }
 
     @DeleteMapping("/{transactionId}")

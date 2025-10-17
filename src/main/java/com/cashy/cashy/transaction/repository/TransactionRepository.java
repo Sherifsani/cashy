@@ -18,4 +18,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     Page<Transaction> findByUserProfile(UserProfile user, Pageable pageable);
     Page<Transaction> findByUserProfileIdAndTransactionType(UUID userId, TransactionType type, Pageable pageable);
     Optional<Transaction> findByUserProfileIdAndId(UUID id, Long transactionId);
+    Page<Transaction> findByUserProfileAndDescriptionContainingIgnoreCase(UserProfile user, String description, Pageable pageable);
+    Page<Transaction> findByUserProfileId(UUID userId, Pageable pageable);
 }
